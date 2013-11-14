@@ -1,0 +1,101 @@
+<html xmlns:py="http://genshi.edgewall.org/"
+  xmlns:i18n="http://genshi.edgewall.org/i18n"
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  py:strip="">
+
+<py:def function="body_class">no-sidebar</py:def>
+<py:def function="page_title">Contact</py:def>
+
+  <py:match path="breadcrumbs">
+    <li><a href="/contact">Contact</a></li>
+    <li><a href="/contact-report">Report</a></li>
+  </py:match>
+
+  <py:def function="optional_head">
+    <style type="text/css">
+    .count { font-size: 6em; color: #333; font-weight: bold; text-align:center;}
+    th { text-align: center;}
+    </style>
+  </py:def>
+
+  <py:match path="content">
+    <h1>Contact Report</h1>
+
+    <div class="alert alert-danger" py:if="c.error">
+      ${c.error}
+    </div>
+
+    <div class="row" py:if="not c.error">
+      <div class="col-md-6">
+        <div class="panel panel-danger">
+          <div class="panel-heading">Open issues</div>
+          <div class="panel-body" py:if="not c.open_total">
+              <div class="count">${c.open_total}</div>
+          </div>
+          <div class="panel-body" py:if="c.open_total">
+              <div class="col-md-6">
+                <div class="count">${c.open_total}</div>
+              </div>
+              <div class="col-md-6" style="color: #666;">
+                  <div style='min-height: 2em;margin-top: 2.5em;'>Oldest: <a href="${c.issue_url + c.earliest_open_id}">${c.earliest_open}</a></div>
+                  <div style='min-height: 2em;'>Newest: <a href="${c.issue_url + c.latest_open_id}">${c.latest_open}</a></div>
+              </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="panel panel-success">
+          <div class="panel-heading">Closed issues</div>
+          <div class="panel-body" py:if="not c.closed_total">
+                <div class="count">${c.closed_total}</div>
+          </div>
+
+          <div class="panel-body" py:if="c.closed_total">
+              <div class="col-md-6">
+                <div class="count">${c.closed_total}</div>
+              </div>
+              <div class="col-md-6" style="color: #666;">
+                  <div style='min-height: 2em;margin-top: 2.5em;'>Oldest: <a href="${c.issue_url + c.earliest_closed_id}">${c.earliest_closed}</a></div>
+                  <div style='min-height: 2em;'>Newest: <a href="${c.issue_url + c.latest_closed_id}">${c.latest_closed}</a></div>
+              </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div class="panel panel-info" py:if="not c.error">
+      <div class="panel-heading">Tickets by category</div>
+      <div class="panel-body">
+          <table class="table table-bordered">
+            <thead>
+              <tr>
+                <th>Category</th>
+                <th>Open</th>
+                <th>Closed</th>
+              </tr>
+            </thead>
+            <tbody>
+            <py:for each="category,id in c.categories.iteritems()">
+              <tr>
+                  <td>
+                      <a href="${c.issues_url}${id}"><i class="icon-external-link"></i></a>
+                      ${category}</td>
+                  <td align="center">${c.open.get(category, 0)}</td>
+                  <td align="center">${c.closed.get(category, 0)}</td>
+              </tr>
+            </py:for>
+            </tbody>
+          </table>
+      </div>
+    </div>
+
+
+  </py:match>
+
+
+  <xi:include href="../../layout_base.html" />
+</html>
+
+

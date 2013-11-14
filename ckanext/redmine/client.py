@@ -9,6 +9,7 @@ log = logging.getLogger(__name__)
 
 _categories = {}
 
+
 def _make_call(path, method="GET", data=None):
     server = config.get('ckanext.redmine.url')
     apikey = config.get('ckanext.redmine.apikey')
@@ -62,3 +63,22 @@ def post_issue(issue_dict):
     if not response_data:
         return None
     return response_data['issue']['id']
+
+def get_issues_count(status='open'):
+    path = "/projects/{0}/issues.json?limit=100&status_id={1}&sort=created_on:desc".format(
+        config.get('ckanext.redmine.project'), status)
+    return _make_call(path)
+
+    #To fetch issues created after a certain date (uncrypted filter is ">=2012-03-01") :
+#GET /issues.xml?created_on=%3E%3D2012-03-01
+
+def get_issues_url():
+    server = config.get('ckanext.redmine.url')
+    project = config.get('ckanext.redmine.project')
+    return urljoin(server, "/projects/{0}/issues?sort=status&set_filter=1&f[]=category_id&op[category_id]==&v[category_id][]=".format(project))
+
+def get_single_issue_url():
+    server = config.get('ckanext.redmine.url')
+    return urljoin(server, "/issues/")
+
+

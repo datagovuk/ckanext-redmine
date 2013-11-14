@@ -20,7 +20,8 @@ setup(
 	include_package_data=True,
 	zip_safe=False,
 	install_requires=[
-		"requests>=1.1.0"
+		"requests>=1.1.0",
+        "python-dateutil",
 	],
 	entry_points=\
 	"""

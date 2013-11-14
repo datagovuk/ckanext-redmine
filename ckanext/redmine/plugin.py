@@ -38,10 +38,15 @@ class RedminePlugin(p.SingletonPlugin):
                     controller=controller, action='contact')
         map.connect('/contact',
                     controller=controller, action='contact')
+        map.connect('/contact-report',
+                    controller=controller, action='report')
         return map
 
     def get_auth_functions(self):
-        return {}
+        from ckanext.redmine.auth import issue_list
+        return {
+            "issue_list": issue_list
+        }
 
     def get_actions(self):
         from ckanext.redmine.logic import issue_create
