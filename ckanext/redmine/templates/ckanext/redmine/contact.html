@@ -1,0 +1,66 @@
+<html xmlns:py="http://genshi.edgewall.org/"
+  xmlns:i18n="http://genshi.edgewall.org/i18n"
+  xmlns:xi="http://www.w3.org/2001/XInclude"
+  py:strip="">
+
+<py:def function="body_class">no-sidebar</py:def>
+
+  <py:def function="page_title">Contact</py:def>
+
+  <py:match path="breadcrumbs">
+    <li><a href="/contact">Contact</a></li>
+  </py:match>
+
+  <py:match path="content">
+    <h1>Contact</h1>
+
+    <div class="alert alert-danger" py:if="errors">
+        <strong>There are errors in the form below, please correct them before submitting again</strong>
+    </div>
+
+    <form class="form" action="${h.url_for(controller='ckanext.redmine.controller:RedmineController', action='contact')}" method="POST">
+        <input name="referer" type="hidden" value="${data.get('referer')}"></input>
+        <input name="dataset" type="hidden" value="${data.get('dataset')}"></input>
+
+        <div class="form-group" py:attrs="{'class': 'has-error'} if errors.get('name') else None">
+          <label for="name">Your name</label>
+          <input name="name" type="text" class="form-control" value="${data.get('name')}"></input>
+        </div>
+
+        <div class="form-group"  py:attrs="{'class': 'has-error'} if errors.get('email') else None">
+          <label for="email">Your email address</label>
+          <input name="email" type="text" class="form-control" value="${data.get('email')}"></input>
+        </div>
+
+        <div class="form-group"  py:attrs="{'class': 'has-error'} if errors.get('subject') else None">
+          <label for="subject">Subject</label>
+          <input name="subject" type="text" class="form-control" value="${data.get('subject','')}"></input>
+        </div>
+
+        <div class="form-group" py:if="c.categories"  py:attrs="{'class': 'has-error'} if errors.get('category') else None">
+          <label for="category">Category</label>
+          <select name="category" class="form-control">
+            <option value=""> - Please choose -</option>
+            <py:for each="name,id in c.categories.iteritems()">
+              <option value="${id}" py:attrs="{'selected':'selected'} if c.category_id and int(c.category_id)==id else None">${name}</option>
+            </py:for>
+          </select>
+        </div>
+
+        <div class="form-group"  py:attrs="{'class': 'has-error'} if errors.get('message') else None">
+          <label for="message">Message</label>
+          <textarea name="message" rows="6" class="form-control">${data.get('message','')}</textarea>
+        </div>
+
+        <div class="form-group" style="margin-top:10px;">
+          <input type="submit" value='Send message' class="btn btn-primary"></input>
+        </div>
+    </form>
+
+  </py:match>
+
+
+  <xi:include href="../../layout_base.html" />
+</html>
+
+
