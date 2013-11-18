@@ -11,6 +11,7 @@ _categories = {}
 
 
 def _make_call(path, method="GET", data=None):
+    """ Makes the actual HTTP request to the redmine server """
     server = config.get('ckanext.redmine.url')
     apikey = config.get('ckanext.redmine.apikey')
     project = config.get('ckanext.redmine.project')
@@ -20,7 +21,6 @@ def _make_call(path, method="GET", data=None):
     if method == "GET":
         response = requests.get(url,headers=headers)
     else:
-        print "data is ", data
         headers['Content-type'] = 'application/json'
         response = requests.post(url,headers=headers, data=data)
     if response.status_code not in [200, 201, 304]:
@@ -31,26 +31,38 @@ def _make_call(path, method="GET", data=None):
 
 
 def load_categories():
+    """
+    Returns a dictionary of category=>id from redmine, or the cache if we have already
+    fetched it previously.
+    """
     global _categories
     if not _categories:
         log.info("Loading redmine categories")
         path = "/projects/{0}/issue_categories.json".format(config.get('ckanext.redmine.project'))
         data = _make_call(path)
+        if not data:
+            log.error("Failed to get categories")
+            return _categories
+
         for item in data['issue_categories']:
             _categories[item['name']] = item['id']
     return _categories
 
 def post_issue(issue_dict):
+    """
+    Creates a new issue
+    """
     path = "/issues.json"
 
     data = {
         "issue":{
                 "project_id": config.get('ckanext.redmine.project'),
                 "subject": issue_dict["subject"],
-                "category_id": issue_dict["category"],
                 "description": issue_dict["message"],
                 }
     }
+    if issue_dict.get("category"):
+        data["issue"]["category_id"] = issue_dict["category"]
 
     extra = {}
     for k, v in issue_dict.iteritems():
@@ -65,6 +77,7 @@ def post_issue(issue_dict):
     return response_data['issue']['id']
 
 def get_issues_count(status='open'):
+    """ Gets the number of issues with the specified state """
     path = "/projects/{0}/issues.json?limit=100&status_id={1}&sort=created_on:desc".format(
         config.get('ckanext.redmine.project'), status)
     return _make_call(path)
@@ -73,11 +86,13 @@ def get_issues_count(status='open'):
 #GET /issues.xml?created_on=%3E%3D2012-03-01
 
 def get_issues_url():
+    """ Get the URL for filtered issues """
     server = config.get('ckanext.redmine.url')
     project = config.get('ckanext.redmine.project')
     return urljoin(server, "/projects/{0}/issues?sort=status&set_filter=1&f[]=category_id&op[category_id]==&v[category_id][]=".format(project))
 
 def get_single_issue_url():
+    """ Get the URL for a single issue """
     server = config.get('ckanext.redmine.url')
     return urljoin(server, "/issues/")
 

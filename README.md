@@ -31,6 +31,7 @@ This shows the number of open/closed tickets with links to the youngest and olde
 ckanext.redmine.url = http://<URL_OF_REDMINE_SERVER>
 ckanext.redmine.apikey = <API_KEY>
 ckanext.redmine.project = <PROJECT_NAME>
+ckanext.redmine.error_email = <EMAIL>
 ```
 
  * URL_OF_REDMINE_SERVER - The web address of your redmine installation
@@ -38,6 +39,9 @@ ckanext.redmine.project = <PROJECT_NAME>
  * API_KEY - The API key of a user with permission to create issues, this can be found at /my/account on your installation, you should click 'Show' underneath the API access key section on the right.
  
  * PROJECT_NAME - This is the short name of the project, for instance a project called "Issues Test" will end up with a short-name like issues-test.  You can see this in the browser address bar when you visit it in redmine.
+ 
+  * EMAIL - The email address of a user (or several) to be notified when   
+contact fails
  
 ## Future
 

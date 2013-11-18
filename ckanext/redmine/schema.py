@@ -6,7 +6,7 @@ def get_issue_schema():
         'subject': [not_empty, unicode],
         'name'   : [not_empty, unicode],
         'email'  : [not_empty, unicode],
-        'category': [not_empty, unicode],
+        'category': [ignore_missing, unicode],
 
         'dataset': [ignore_missing, unicode]
     }
