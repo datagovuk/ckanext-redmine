@@ -1,3 +1,4 @@
+import json
 import logging
 import ckan.plugins as p
 import ckan.lib.helpers as h
@@ -11,30 +12,41 @@ class RedminePlugin(p.SingletonPlugin):
     p.implements(p.IRoutes, inherit=True)
     p.implements(p.IAuthFunctions, inherit=True)
     p.implements(p.IActions, inherit=True)
+    p.implements(p.ITemplateHelpers, inherit=True)
 
     def configure(self, config):
         pass
 
     def update_config(self, config):
+        from ckanext.redmine.client import RedmineClient
         p.toolkit.add_template_directory(config, 'templates')
-        p.toolkit.add_public_directory(config, 'public')
+
+        RedmineClient._default_name = config.get("ckanext.redmine.default_name","")
 
         # Check we have the required config
-        server = config.get('ckanext.redmine.url')
-        apikey = config.get('ckanext.redmine.apikey')
-        project = config.get('ckanext.redmine.project')
+        config_file = config.get('ckanext.redmine.config')
+        if not config_file:
+            log.error("Unable to load redmine config file")
 
-        if not server:
-            log.error("Redmine server location not specified in config")
-        if not apikey:
-            log.error("Redmine APIKey not specified in config")
-        if not project:
-            log.error("Redmine project short-name not specified in config")
+        with open(config_file, 'r') as f:
+            RedmineClient._config = json.loads(f.read())
+
+
+    def get_helpers(self):
+        """
+        A dictionary of extra helpers that will be available to provide
+        redmine specific helpers to the templates.
+        """
+        helper_dict = {
+            'redmine_is_installed': lambda: True
+        }
+        return helper_dict
+
 
 
     def before_map(self, map):
         controller = 'ckanext.redmine.controller:RedmineController'
-        map.connect('/contact/{category:.*}',
+        map.connect('/contact/:name',
                     controller=controller, action='contact')
         map.connect('/contact',
                     controller=controller, action='contact')

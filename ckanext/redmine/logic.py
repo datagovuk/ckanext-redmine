@@ -4,7 +4,7 @@ from ckanext.dgu.plugins_toolkit import (render, c, request, _,
 from ckan.lib.navl.dictization_functions import validate
 from ckan.lib.base import h
 
-from ckanext.redmine.client import post_issue
+from ckanext.redmine.client import RedmineClient
 from ckanext.redmine.schema import get_issue_schema
 import logging
 
@@ -29,4 +29,6 @@ Dataset: {2}
                 data_dict.get('dataset', 'N/A'),
                 data_dict['message'])
     data_dict['message'] = msg
-    return post_issue(data_dict)
+
+    client = RedmineClient("general")
+    return client.post_issue(data_dict)

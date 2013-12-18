@@ -12,7 +12,7 @@
   </py:match>
 
   <py:match path="content">
-    <h1>Contact</h1>
+    <h1>Contact <small py:if="c.name">${c.name}</small></h1>
 
     <div class="alert alert-danger" py:if="errors">
         <strong>There are errors in the form below, please correct them before submitting again</strong>

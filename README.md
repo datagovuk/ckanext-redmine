@@ -8,7 +8,9 @@ This extension provides:
 
 ### Contact form 
 
-This (defaults to /contact) that allows a user to contact the data portal owners and send feedback/questions within certain categories. The categories drop-down is populated with the categories from Redmine and so these should be created within Redmine itself (optionally with a default assignee).
+This (defaults to /contact) that allows a user to contact the data portal owners and send feedback/questions to various redmine installations. Each installation can be made available at a URL to cover different types of reports.  For instance on data.gov.uk /contact and /content/general put data into one redmine instance, /contact/location puts the issues in another.
+
+The categories drop-down is populated with the categories from the named Redmine instance and so these should be created within Redmine itself (optionally with a default assignee).
 
 In this version of the extension all submitted issues are private (at least if Redmine is configured to be private) and they are not shown on the data portal.
 
@@ -25,24 +27,35 @@ This shows the number of open/closed tickets with links to the youngest and olde
 
 2. Add ```redmine``` to your ckan.plugins.
 
-3. Add the following entries to your ckan .ini file.
+3. Copy redmine-config-simple.json to where you put your config files and file in the required fields (for the number of instances you want to connect to). For each instance specify a name and fill in the fields as follows:
+
 
 ```
-ckanext.redmine.url = http://<URL_OF_REDMINE_SERVER>
-ckanext.redmine.apikey = <API_KEY>
-ckanext.redmine.project = <PROJECT_NAME>
-ckanext.redmine.error_email = <EMAIL>
+ -  url - The web address of your redmine installation 
+ 
+ -  apikey - The API key of a user with permission to create 
+    issues, this can be found at /my/account on your 
+    installation, you should click 'Show' underneath the API 
+    access key section on the right.
+ 
+ -  project - This is the short name of the project, for 
+    instance a project called "Issues Test" will end up 
+    with a short-name like issues-test.  You can see this 
+    in the browser address bar when you visit it in redmine.
+ 
+ - error_email - The email address of a user (or several) 
+   to be notified when contact fails
+ 
+ - default - A boolean specifying whether this instance should
+   be the one displayed at /contact
 ```
 
- * URL_OF_REDMINE_SERVER - The web address of your redmine installation
- 
- * API_KEY - The API key of a user with permission to create issues, this can be found at /my/account on your installation, you should click 'Show' underneath the API access key section on the right.
- 
- * PROJECT_NAME - This is the short name of the project, for instance a project called "Issues Test" will end up with a short-name like issues-test.  You can see this in the browser address bar when you visit it in redmine.
- 
-  * EMAIL - The email address of a user (or several) to be notified when   
-contact fails
- 
+4. Add the following entry to your ckan .ini file.
+
+```
+ckanext.redmine.config = path_to_config_file
+```
+
 ## Future
 
 #### Spam checking

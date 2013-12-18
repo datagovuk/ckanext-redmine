@@ -19,7 +19,7 @@ class RedmineController(BaseController):
         Generates a simple report of open/closed counts both as totals
         and per-category
         """
-        from ckanext.redmine import client
+        from ckanext.redmine.client import RedmineClient
         import ckan.model as model
 
         # Ensure only sysadmins can view this report for now.
@@ -31,6 +31,7 @@ class RedmineController(BaseController):
 
         # Obtain the category list and the URLs we need for links to
         # redmine.
+        client = RedmineClient("general")
         c.categories = client.load_categories()
         c.issues_url = client.get_issues_url()
         c.issue_url = client.get_single_issue_url()
@@ -120,20 +121,24 @@ class RedmineController(BaseController):
 
 
 
-    def contact(self, category=None):
+    def contact(self, name=None):
         """
         This action allows users to create an issue by filling in a contact
         form.
         """
         import ckan.model as model
-        from ckanext.redmine import client
+        from ckanext.redmine.client import RedmineClient
 
+        print name
         extra_vars = {
             "data": {},
             "errors": {}
         }
 
+        client = RedmineClient(name)
         c.categories = client.load_categories()
+        c.name = name
+
         if request.method == 'POST':
             data = clean_dict(unflatten(tuplize_dict(parse_params(request.POST))))
             context = {'model': model, 'session': model.Session,
@@ -171,12 +176,12 @@ class RedmineController(BaseController):
             if dataset_name:
                 extra_vars['data']['dataset'] = h.url_for(controller='package', action='read', id=dataset_name, qualified=True)
 
-            if category:
-                # Match any category in the URL with the value we retrieved (which may
-                # be mixed-case) from redmine
-                for k, v in c.categories.iteritems():
-                    if k.lower() == category:
-                        c.category_id = v
+            #if category:
+            #    # Match any category in the URL with the value we retrieved (which may
+            #    # be mixed-case) from redmine
+            #    for k, v in c.categories.iteritems():
+            #        if k.lower() == category:
+            #            c.category_id = v
 
         return render('ckanext/redmine/contact.html', extra_vars=extra_vars)
 
