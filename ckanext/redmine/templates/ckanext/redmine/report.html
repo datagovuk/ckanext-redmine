@@ -19,10 +19,32 @@
   </py:def>
 
   <py:match path="content">
-    <h1>Contact Report</h1>
+    <h1>Contact Report <small>${c.current_instance.title()}</small></h1>
 
     <div class="alert alert-danger" py:if="c.error">
       ${c.error}
+    </div>
+
+  <div class="panel panel-info">
+    <div class="panel-heading">Contact type</div>
+    <div class="panel-body">
+        <form class="form form-horizontal" action="" method="GET">
+            <div class="col-md-10">
+              <select id="instance" name="instance" class="form-control">
+                <py:for each="instance in c.instance_names">
+                  <option value="${instance}" py:attrs="{'selected':'selected'} if instance == c.current_instance else None">${instance.title()}</option>
+                </py:for>
+              </select>
+            </div>
+            <input type="submit" class="btn btn-primary"></input>
+        </form>
+    </div>
+  </div>
+
+
+    <div class="row" style="margin-bottom:10px">
+      <div class="col-md-12">
+      </div>
     </div>
 
     <div class="row" py:if="not c.error">

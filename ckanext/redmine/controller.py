@@ -29,9 +29,12 @@ class RedmineController(BaseController):
         except NotAuthorized, e:
             h.redirect_to('/')
 
+        c.instance_names = RedmineClient._config.keys()
+        c.current_instance = request.GET.get('instance', c.instance_names[0])
+
         # Obtain the category list and the URLs we need for links to
         # redmine.
-        client = RedmineClient("general")
+        client = RedmineClient(c.current_instance)
         c.categories = client.load_categories()
         c.issues_url = client.get_issues_url()
         c.issue_url = client.get_single_issue_url()
